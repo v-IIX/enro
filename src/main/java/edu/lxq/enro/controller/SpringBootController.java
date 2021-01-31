@@ -1,8 +1,10 @@
 package edu.lxq.enro.controller;
 
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
 @Controller
 public class SpringBootController {
 
@@ -11,10 +13,24 @@ public class SpringBootController {
 		return "index";
 	}
 
-	@PostMapping("/login")
-	public String login(String username, String password) {
-		return "index";
+	/*
+	 * @RequestMapping("/login") public String login(String username, String
+	 * password) { return "login"; }
+	 */
+
+	@RequestMapping("/login")
+	public ModelAndView login(String username, String password) {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("error", false);
+		mav.addObject("code", 200);
+		mav.setViewName("login");
+		return mav;
 	}
+
+	/*
+	 * @PostMapping("/login") public String login(String username, String password)
+	 * { return "index"; }
+	 */
 
 	@RequestMapping("/user")
 	public String user() {
