@@ -18,18 +18,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests().antMatchers("/login").permitAll().antMatchers("/service1", "/service2")
-		    .hasAnyAuthority("ROLE_user", "ROLE_admin").antMatchers("/log", "/user").hasAnyRole("admin").anyRequest()
-		    .authenticated();
-		http.formLogin().loginPage("/login").loginProcessingUrl("/index").usernameParameter("username")
-		    .passwordParameter("password")
-		    /* .defaultSuccessUrl("/index") */.successHandler(mySuccessHandler)
-		    .failureHandler(myFailureHandler);
-		http.logout().logoutSuccessUrl("/index");
+		http.authorizeRequests().antMatchers("/login", "/log").permitAll().antMatchers("/service1", "/service2")
+				.hasAnyAuthority("ROLE_user", "ROLE_admin").antMatchers("/log", "/user").hasAnyRole("admin").anyRequest()
+				.authenticated();
+		http.formLogin().loginPage("/login").loginProcessingUrl("/action").usernameParameter("username")
+				.passwordParameter("password").successHandler(mySuccessHandler).failureHandler(myFailureHandler);
+		http.logout().logoutSuccessUrl("/login");
 		http.csrf().disable();
 
 		// 取消认证
-		//http.csrf().disable().authorizeRequests().anyRequest().permitAll().and().logout().permitAll();
+		// http.csrf().disable().authorizeRequests().anyRequest().permitAll().and().logout().permitAll();
 
 	}
 
@@ -37,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 		auth.inMemoryAuthentication().withUser("user").password(new BCryptPasswordEncoder().encode("123")).roles("user")
-		    .and().withUser("admin").password(new BCryptPasswordEncoder().encode(("123"))).roles("admin").and()
-		    .passwordEncoder(new BCryptPasswordEncoder());
+				.and().withUser("admin").password(new BCryptPasswordEncoder().encode(("123"))).roles("admin").and()
+				.passwordEncoder(new BCryptPasswordEncoder());
 	}
 
 	@Override

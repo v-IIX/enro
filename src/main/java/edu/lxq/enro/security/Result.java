@@ -7,10 +7,11 @@ public class Result {
 	private String msg;
 	private Object data;
 	
-	public Result(Boolean isok,Integer code,String msg) {
+	public Result(Boolean isok,Integer code,String msg,Object data) {
 		this.isok=isok;
 		this.code=code;
 		this.msg=msg;
+		this.data=data;
 	}
 
 	public Boolean getIsok() {

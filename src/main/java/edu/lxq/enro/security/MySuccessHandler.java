@@ -1,6 +1,7 @@
 package edu.lxq.enro.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,21 +13,26 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 public class MySuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	@Value("${spring.security.loginType}")
 	private String loginType;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws ServletException, IOException {
+	public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth)
+			throws ServletException, IOException {
 		if (loginType.equalsIgnoreCase("json")) {
+			Object pricipal = auth.getPrincipal();
+			res.setContentType("application/json;charset=UTF-8");
 			ObjectMapper objectMapper = new ObjectMapper();
-			String json = objectMapper.writeValueAsString(new Result(true,200,"success"));
-			response.setContentType("application/json;charset=UTF-8");
-			response.getWriter().write(json);
-		}else {
-			super.onAuthenticationSuccess(request, response, authentication);
+			Result result=new Result(true,200,"success",pricipal);
+			PrintWriter out = res.getWriter();
+			out.write(objectMapper.writeValueAsString(result));
+			out.flush();
+			out.close();
+		} else {
+			super.onAuthenticationSuccess(req, res, auth);
 		}
 	}
 

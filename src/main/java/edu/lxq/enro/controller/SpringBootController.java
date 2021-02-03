@@ -9,7 +9,6 @@ public class SpringBootController {
 
 	@RequestMapping("/index")
 	public String index(String username, String password) {
-		System.out.println("here");
 		return "index";
 	}
 
@@ -39,7 +38,7 @@ public class SpringBootController {
 
 	@RequestMapping("/log")
 	public String logger() {
-		return "logger";
+		return "log";
 	}
 
 	@RequestMapping("/service1")

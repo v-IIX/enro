@@ -1,6 +1,7 @@
 package edu.lxq.enro.security;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,19 +14,23 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class MyFailureHandler extends SimpleUrlAuthenticationFailureHandler  {
+public class MyFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 	@Value("${spring.security.loginType}")
 	private String loginType;
-	
+
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException exception) throws IOException, ServletException {
-		if(loginType.equalsIgnoreCase("json")){
+	public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res,
+			org.springframework.security.core.AuthenticationException exception) throws IOException, ServletException {
+		if (loginType.equalsIgnoreCase("json")) {
 			ObjectMapper objectMapper = new ObjectMapper();
-			String json = objectMapper.writeValueAsString(new Result(false,400,"failure"));
-			response.setContentType("application/json;charset=UTF-8");
-			response.getWriter().write(json);
-		}else {
-			super.onAuthenticationFailure(request, response, exception);
+			res.setContentType("application/json;charset=UTF-8");
+			Result result = new Result(false, 400, "failure", exception);
+			PrintWriter out = res.getWriter();
+			out.write(objectMapper.writeValueAsString(result));
+			out.flush();
+			out.close();
+		} else {
+			super.onAuthenticationFailure(req, res, exception);
 		}
 	}
 
