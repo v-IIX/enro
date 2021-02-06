@@ -1,7 +1,5 @@
 package edu.lxq.enro.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,9 +7,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredEvent;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -20,11 +31,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private MyFailureHandler myFailureHandler;
 	@Autowired
 	private MySuccessHandler mySuccessHandler;
+	@Autowired
+	private MyExpiredSessionStrategy myExpiredSessionStrategy;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder()).withUser("admin")
-				.password(new BCryptPasswordEncoder().encode("123")).roles("admin");
+		auth.inMemoryAuthentication().withUser("admin").password(new BCryptPasswordEncoder().encode("123")).roles("admin")
+				.and().withUser("user").password(new BCryptPasswordEncoder().encode("123")).roles("user").and()
+				.passwordEncoder(new BCryptPasswordEncoder());
 
 	}
 
@@ -35,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().authenticated();
+		http.authorizeRequests().antMatchers("/index.html").permitAll().anyRequest().authenticated();
 		http.formLogin().loginPage("/login").loginProcessingUrl("/action").usernameParameter("username")
 				.passwordParameter("password").successHandler(mySuccessHandler).failureHandler(myFailureHandler).permitAll();
 		http.logout().logoutUrl("/logout").logoutSuccessHandler((req, res, authentication) -> {
@@ -53,5 +67,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			out.close();
 		});
 		http.csrf().disable();
+		http.sessionManagement()/*
+														 * .sessionCreationPolicy( SessionCreationPolicy.IF_REQUIRED)
+														 * .invalidSessionUrl("/index.html") .sessionFixation().migrateSession()
+														 */
+				.invalidSessionStrategy(new InvalidSessionStrategy() {
+
+					@Override
+					public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response)
+							throws IOException, ServletException {
+						response.setContentType("application/json;charset=UTF-8");
+						response.getWriter().append("session无效，请重新登录");
+					}
+				}).maximumSessions(
+						1)/* .maxSessionsPreventsLogin(false) */
+				.expiredSessionStrategy(new SessionInformationExpiredStrategy() {
+					@Override
+					public void onExpiredSessionDetected(SessionInformationExpiredEvent event)
+							throws IOException, ServletException {
+						HttpServletResponse response = event.getResponse();
+						response.setContentType("application/json;charset=UTF-8");
+						response.getWriter().write("当前用户已在其他地方登录...");
+					}
+				});
 	}
 }
