@@ -10,35 +10,21 @@
 		<result property="dob" column="dob"></result>
 
 	</resultMap>
-	
+
 	<resultMap type="edu.lxq.enro.security.MyUserDetails" id="MyUserDetailsResult">
 
-    <result property="username" column="name"></result>
-    <result property="password" column="password"></result>
-    <result property="enabled" column="enabled"></result>
+		<result property="username" column="name"></result>
+		<result property="password" column="password"></result>
+		<result property="enabled" column="enabled"></result>
 
-  </resultMap>
+	</resultMap>
 
-	<select id="findAllStudents" resultMap="StudentResult">
-		SELECT * FROM user
-	</select>
-
-	<select id="findStudentById" parameterType="int"
-		resultType="Student">
+	<select id="findByUserName" parameterType="String" resultMap="MyUserDetailsResult">
 		SELECT *
-		FROM user WHERE
-		id=#{Id}
+		FROM user WHERE name=#{userName}
 	</select>
 
-	<select id="findByUserName" parameterType="String"
-		resultMap="MyUserDetailsResult">
-		SELECT *
-		FROM user WHERE
-		name=#{username}
-	</select>
-
-	<select id="findRoleByUserName" parameterType="String"
-		resultType="String">
+	<select id="findRoleByUserName" parameterType="String" resultType="String">
 		SELECT
 		role.id
 		FROM
@@ -51,6 +37,18 @@
 		WHERE
 		user.name =
 		#{userName};
+	</select>
+
+	<select id="findAuthorityByRoleCodes" parameterType="String" resultType="String">
+		SELECT distinct
+    role_permission.pid
+		FROM
+    role_permission
+		WHERE
+    role_permission.rid IN 
+		<foreach collection='list' item='roleCode' open='(' separator=',' close=')'>
+			#{roleCode}
+		</foreach>
 	</select>
 
 	<insert id="insertStudent" parameterType="Student">
