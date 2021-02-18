@@ -3,22 +3,54 @@
 
 <mapper namespace="edu.lxq.enro.mybatis.StudentMapper">
 	<resultMap type="Student" id="StudentResult">
+
 		<id property="studId" column="stu_id"></id>
 		<result property="name" column="name"></result>
 		<result property="email" column="email"></result>
 		<result property="dob" column="dob"></result>
 
 	</resultMap>
+	
+	<resultMap type="edu.lxq.enro.security.MyUserDetails" id="MyUserDetailsResult">
+
+    <result property="username" column="name"></result>
+    <result property="password" column="password"></result>
+    <result property="enabled" column="enabled"></result>
+
+  </resultMap>
 
 	<select id="findAllStudents" resultMap="StudentResult">
-		SELECT * FROM student
+		SELECT * FROM user
 	</select>
 
 	<select id="findStudentById" parameterType="int"
 		resultType="Student">
-		SELECT STUD_ID AS STUDID,NAME,EMAIL,DOB
-		FROM STUDENT WHERE
-		STUD_ID=#{Id}
+		SELECT *
+		FROM user WHERE
+		id=#{Id}
+	</select>
+
+	<select id="findByUserName" parameterType="String"
+		resultMap="MyUserDetailsResult">
+		SELECT *
+		FROM user WHERE
+		name=#{username}
+	</select>
+
+	<select id="findRoleByUserName" parameterType="String"
+		resultType="String">
+		SELECT
+		role.id
+		FROM
+		user
+		JOIN
+		user_role ON user.id =
+		user_role.uid
+		JOIN
+		role ON user_role.rid = role.id
+		WHERE
+		user.name =
+		#{userName};
 	</select>
 
 	<insert id="insertStudent" parameterType="Student">

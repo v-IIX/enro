@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import edu.lxq.enro.mybatis.Student;
 import edu.lxq.enro.mybatis.StudentMapper;
+import edu.lxq.enro.security.MyUserDetails;
 
 @SpringBootTest
 class EnroApplicationTests {
@@ -28,10 +29,14 @@ class EnroApplicationTests {
 		// 然后根据 sqlSessionFactory 得到 session
 		SqlSession session = sqlSessionFactory.openSession();
 		// 模糊查询
-		List<Student> listStudent = session.selectList("findAllStudents");
-		for (Student student : listStudent) {
-			System.out.println("ID:" + student.getStudId() + ",NAME:" + student.getName());
-		}
+		//List<Student> listStudent = session.selectList("findAllStudents");
+		//使用mapper方式
+		StudentMapper studentMapper = session.getMapper(StudentMapper.class);
+		MyUserDetails allStudent= studentMapper.findByUserName("zhang3");
+		System.out.println(allStudent.getUsername());
+		/*
+		 * for (String student : allStudent) { System.out.println("ID:" + student); }
+		 */
 	}
 
 }
