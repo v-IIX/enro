@@ -18,5 +18,7 @@ public interface StudentMapper {
 
 	List<String> findAuthorityByRoleCodes(List<String> roles);
 
+	List<String> findUrlsByUserName(String userName);
+
 	void insertStudent(Student student);
 }
