@@ -2,7 +2,7 @@ HELP.md
 target/
 /src/main/resources/database_connect_config.properties
 /src/main/resources/private_config/
-/src/main/resources/application.properties
+#/src/main/resources/application.properties
 layui/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

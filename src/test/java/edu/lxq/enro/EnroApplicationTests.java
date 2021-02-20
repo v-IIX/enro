@@ -1,24 +1,15 @@
 package edu.lxq.enro;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import edu.lxq.enro.dao.GetStudentMapper;
-import edu.lxq.enro.mybatis.StudentMapper;
 import edu.lxq.enro.security.MyUserDetails;
 
 @SpringBootTest
@@ -43,19 +34,19 @@ class EnroApplicationTests {
 		List<String> roles = studentMapper.getMapper().findRoleByUserName("zhang3");
 		List<String> permissions = studentMapper.getMapper().findAuthorityByRoleCodes(roles);
 		List<String> urls = studentMapper.getMapper().findUrlsByUserName("zhang3");
-		//List<String> urls = stuMapper.findUrlsByUserName("zhang3");
+		// List<String> urls = stuMapper.findUrlsByUserName("zhang3");
 
 		roles = roles.stream().map(rc -> "ROLE_" + rc) // 每个对象前加前缀
-				.collect(Collectors.toList()); // 再转换回List
+		    .collect(Collectors.toList()); // 再转换回List
 
 		for (String role : roles) {
 			System.out.println("roles:" + role);
 		}
-		
+
 		for (String url : urls) {
 			System.out.println("urls:" + url);
 		}
-		
+
 		permissions.addAll(roles); // 添加修改好前缀的角色前缀的角色权限
 		for (String permission : permissions) {
 			System.out.println("permissions:" + permission);
