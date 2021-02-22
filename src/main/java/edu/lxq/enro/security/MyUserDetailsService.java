@@ -9,36 +9,28 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import edu.lxq.enro.dao.GetStudentMapper;
 import edu.lxq.enro.mybatis.StudentMapper;
 
 @Component
 public class MyUserDetailsService implements UserDetailsService {
+	@Autowired
+	private GetStudentMapper studentMapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		String resource = "edu/lxq/enro/mybatis/mybatis_config.xml";
-		InputStream inputStream = null;
-		try {
-			inputStream = Resources.getResourceAsStream(resource);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-		// 然后根据 sqlSessionFactory 得到 session
-		SqlSession session = sqlSessionFactory.openSession();
-		// 模糊查询
-		StudentMapper studentMapper = session.getMapper(StudentMapper.class);
+		
 
-		MyUserDetails myUserDetails = studentMapper.findByUserName(username);
-		List<String> roles = studentMapper.findRoleByUserName(username);
-		List<String> permissions = studentMapper.findAuthorityByRoleCodes(roles);
+		MyUserDetails myUserDetails = studentMapper.getMapper().findByUserName(username);
+		List<String> roles = studentMapper.getMapper().findRoleByUserName(username);
+		List<String> permissions = studentMapper.getMapper().findAuthorityByRoleCodes(roles);
 		// 角色是一个特殊的权限，ROLE_前缀
 		roles = roles.stream().map(rc -> "ROLE_" + rc) // 每个对象前加前缀
 				.collect(Collectors.toList()); // 再转换回List
