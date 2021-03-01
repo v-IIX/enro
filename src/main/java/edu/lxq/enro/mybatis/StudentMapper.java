@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import edu.lxq.enro.security.MyUserDetails;
 
-@Component
+//@Component
 public interface StudentMapper {
 	List<Student> findAllStudents();
 

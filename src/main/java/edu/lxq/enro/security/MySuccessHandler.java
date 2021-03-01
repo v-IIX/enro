@@ -26,12 +26,14 @@ public class MySuccessHandler extends SavedRequestAwareAuthenticationSuccessHand
 			Object pricipal = auth.getPrincipal();
 			res.setContentType("application/json;charset=UTF-8");
 			ObjectMapper objectMapper = new ObjectMapper();
-			Result result=new Result(true,200,"success",pricipal);
+			Result result = new Result(true, 200, "success", pricipal);
 			PrintWriter out = res.getWriter();
 			out.write(objectMapper.writeValueAsString(result));
 			out.flush();
 			out.close();
 		} else {
+			// 实现跳转
+			// super.setDefaultTargetUrl("/index");
 			super.onAuthenticationSuccess(req, res, auth);
 		}
 	}

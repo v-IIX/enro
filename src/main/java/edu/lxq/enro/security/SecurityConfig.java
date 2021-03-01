@@ -61,9 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// http.authorizeRequests().antMatchers("/index.html",
-		// "/index").permitAll().anyRequest().authenticated();
-		http.authorizeRequests().antMatchers("/index.html", "/index", "/login").permitAll().anyRequest()
-				.access("@rbacService.hasPermission(request,authentication)");
+		// "/index").permitAll().antMatchers().hasRole("admin").anyRequest().authenticated();
+
+		http.authorizeRequests().antMatchers("/index.html").permitAll()
+				.anyRequest().access("@rbacService.hasPermission(request,authentication)");
+
 		http.formLogin().loginPage("/login").loginProcessingUrl("/action").usernameParameter("username")
 				.passwordParameter("password").successHandler(mySuccessHandler).failureHandler(myFailureHandler).permitAll();
 		http.logout().logoutUrl("/logout").logoutSuccessHandler((req, res, authentication) -> {

@@ -26,15 +26,17 @@ public class MyUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
 
 		MyUserDetails myUserDetails = studentMapper.getMapper().findByUserName(username);
+		if (myUserDetails == null) {
+			throw new UsernameNotFoundException("用户名不存在");
+		}
 		List<String> roles = studentMapper.getMapper().findRoleByUserName(username);
 		List<String> permissions = studentMapper.getMapper().findAuthorityByRoleCodes(roles);
 		// 角色是一个特殊的权限，ROLE_前缀
 		roles = roles.stream().map(rc -> "ROLE_" + rc) // 每个对象前加前缀
 				.collect(Collectors.toList()); // 再转换回List
-		permissions.addAll(roles); // 添加修改好前缀的角色前缀的角色权限
+		// permissions.addAll(roles); // 添加修改好前缀的角色前缀的角色权限
 
 		// 把权限类型的权限给UserDetails
 		myUserDetails.setAuthorities(

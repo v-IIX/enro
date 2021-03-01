@@ -30,7 +30,7 @@ class EnroApplicationTests {
 		 * studentMapper = session.getMapper(StudentMapper.class);
 		 */
 		MyUserDetails student = studentMapper.getMapper().findByUserName("zhang3");
-		System.out.println(student.getUsername());
+		System.out.println("userName:"+student.getUsername());
 		List<String> roles = studentMapper.getMapper().findRoleByUserName("zhang3");
 		List<String> permissions = studentMapper.getMapper().findAuthorityByRoleCodes(roles);
 		List<String> urls = studentMapper.getMapper().findUrlsByUserName("zhang3");
