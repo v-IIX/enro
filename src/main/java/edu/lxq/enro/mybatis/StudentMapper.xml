@@ -11,8 +11,7 @@
 
 	</resultMap>
 
-	<resultMap type="edu.lxq.enro.security.MyUserDetails"
-		id="MyUserDetailsResult">
+	<resultMap type="edu.lxq.enro.security.MyUserDetails" id="MyUserDetailsResult">
 
 		<result property="username" column="name"></result>
 		<result property="password" column="password"></result>
@@ -20,14 +19,17 @@
 
 	</resultMap>
 
-	<select id="findByUserName" parameterType="String"
-		resultMap="MyUserDetailsResult">
+
+
+	<!-- <select id="findByUserName" parameterType="String" resultMap="MyUserDetailsResult"> 
+		SELECT * FROM user WHERE name=#{userName} </select> -->
+
+	<select id="findByUserName" parameterType="String" resultMap="MyUserDetailsResult">
 		SELECT *
 		FROM user WHERE name=#{userName}
 	</select>
 
-	<select id="findRoleByUserName" parameterType="String"
-		resultType="String">
+	<select id="findRoleByUserName" parameterType="String" resultType="String">
 		SELECT
 		role.id
 		FROM
@@ -42,8 +44,7 @@
 		#{userName};
 	</select>
 
-	<select id="findAuthorityByRoleCodes" parameterType="String"
-		resultType="String">
+	<select id="findAuthorityByRoleCodes" parameterType="String" resultType="String">
 		SELECT DISTINCT
 		permission.url
 		FROM
@@ -53,24 +54,25 @@
 		role_permission.pid = permission.id
 		WHERE
 		role_permission.rid IN
-		<foreach collection='list' item='roleCode' open='('
-			separator=',' close=')'>
+		<foreach collection='list' item='roleCode' open='(' separator=',' close=')'>
 			#{roleCode}
 		</foreach>
 	</select>
 
-	<select id="findUrlsByUserName" parameterType="String"
-		resultType="String">
+	<select id="findUrlsByUserName" parameterType="String" resultType="String">
 		SELECT DISTINCT
 		url
 		FROM
 		user
 		JOIN
-		user_role ON user.id = user_role.uid
+		user_role ON user.id =
+		user_role.uid
 		JOIN
-		role_permission ON user_role.rid = role_permission.rid
+		role_permission ON user_role.rid =
+		role_permission.rid
 		JOIN
-		permission ON role_permission.pid = permission.id
+		permission ON role_permission.pid =
+		permission.id
 		WHERE
 		user.name =#{userName}
 	</select>
@@ -79,6 +81,6 @@
 		INSERT INTO
 		STUDENT(STUD_ID,NAME,EMAIL,DOB)
 		VALUES(#{studId},#{name},#{email},#{dob}))
-	</insert>
+			</insert>
 
 </mapper>
