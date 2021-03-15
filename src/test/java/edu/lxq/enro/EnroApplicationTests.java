@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import edu.lxq.enro.config.Generator;
 import edu.lxq.enro.dao.GetStudentMapper;
 import edu.lxq.enro.entity.User;
 import edu.lxq.enro.mapper.UserMapper;
@@ -20,6 +21,8 @@ class EnroApplicationTests {
 	private GetStudentMapper studentMapper;
 	@Autowired
 	private UserMapper userMapper;
+	@Autowired
+	private Generator generator;
 
 	@Test
 	void contextLoads() throws IOException {
